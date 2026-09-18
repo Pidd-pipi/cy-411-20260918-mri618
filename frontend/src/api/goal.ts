@@ -11,6 +11,11 @@ export interface GoalPayload {
   status: GoalStatus;
 }
 
+export interface GoalAdjustmentPayload {
+  newValue: number;
+  effectiveDate: string;
+}
+
 export function fetchGoals(): Promise<Goal[]> {
   return request.get('/goals');
 }
@@ -23,3 +28,6 @@ export function updateGoal(id: number, payload: Partial<GoalPayload>): Promise<{
   return request.patch(`/goals/${id}`, payload);
 }
 
+export function applyGoalAdjustment(id: number, payload: GoalAdjustmentPayload): Promise<{ message: string; goal: Goal }> {
+  return request.post(`/goals/${id}/adjustment`, payload);
+}

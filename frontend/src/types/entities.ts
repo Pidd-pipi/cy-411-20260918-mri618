@@ -1,5 +1,5 @@
 import { ActivityCategory } from '../constants/activity';
-import { GoalStatus } from '../constants/goal';
+import { GoalStatus, GoalAdjustmentSegment } from '../constants/goal';
 
 export interface User {
   id: number;
@@ -35,6 +35,24 @@ export interface Activity {
   factor?: CarbonFactor | null;
 }
 
+export interface GoalAdjustment {
+  id: number;
+  originalValue: number;
+  newValue: number;
+  effectiveDate: string;
+  createdAt?: string;
+}
+
+export interface GoalSegmentProgress {
+  segment: GoalAdjustmentSegment;
+  cap: number;
+  emitted: number;
+  remaining: number;
+  progress: number;
+  startDate: string;
+  endDate: string;
+}
+
 export interface Goal {
   id: number;
   userId: number;
@@ -46,6 +64,11 @@ export interface Goal {
   status: GoalStatus;
   currentValue?: number;
   progress?: number;
+  originalValue?: number | null;
+  currentCapValue?: number;
+  remaining?: number;
+  segments?: GoalSegmentProgress[] | null;
+  adjustment?: GoalAdjustment | null;
 }
 
 export interface AuditLog {

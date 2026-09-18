@@ -17,3 +17,14 @@ export const GOAL_STATUS_ERROR_FIELDS = {
   TARGET_VALUE: 'Goal.target_value'
 };
 
+export enum GoalAdjustmentSegment {
+  ORIGINAL = 'original',
+  CURRENT = 'current'
+}
+
+export const GOAL_ADJUSTMENT_ERROR_FIELDS = {
+  NEW_VALUE: 'GoalAdjustment.new_value',
+  EFFECTIVE_DATE: 'GoalAdjustment.effective_date',
+  STATUS: 'Goal.status'
+};
+

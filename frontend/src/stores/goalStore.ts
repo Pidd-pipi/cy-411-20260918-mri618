@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { createGoal, fetchGoals, GoalPayload } from '../api/goal';
+import { applyGoalAdjustment, createGoal, fetchGoals, GoalAdjustmentPayload, GoalPayload } from '../api/goal';
 import { Goal } from '../types/entities';
 
 interface GoalStore {
@@ -7,6 +7,7 @@ interface GoalStore {
   loading: boolean;
   load: () => Promise<void>;
   add: (payload: GoalPayload) => Promise<void>;
+  adjust: (id: number, payload: GoalAdjustmentPayload) => Promise<void>;
 }
 
 export const useGoalStore = create<GoalStore>((set, get) => ({
@@ -20,6 +21,9 @@ export const useGoalStore = create<GoalStore>((set, get) => ({
   async add(payload) {
     await createGoal(payload);
     await get().load();
+  },
+  async adjust(id, payload) {
+    await applyGoalAdjustment(id, payload);
+    await get().load();
   }
 }));
-

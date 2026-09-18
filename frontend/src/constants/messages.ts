@@ -1,6 +1,7 @@
 export const Messages = {
   FRONTEND_ACTIVITY_SAVED: '活动记录已同步到碳账本',
   FRONTEND_GOAL_SAVED: '减排目标已更新',
+  FRONTEND_GOAL_ADJUSTED: '期中调整已落库，两段结余已按生效日重算',
   FRONTEND_PROFILE_SAVED: '个人资料已保存',
   FRONTEND_FACTOR_REQUIRED: '请先选择匹配的排放因子',
   BACKEND_SHARED_COPY: '前后端耦合文案：修改文案时需要同步后端 constants/messages.ts',

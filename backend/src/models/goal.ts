@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { GoalStatus } from '../constants/goal';
+import { GoalAdjustment } from './goalAdjustment';
 import { User } from './user';
 
 @Entity('goals')
@@ -31,5 +32,8 @@ export class Goal {
   @ManyToOne(() => User, (user) => user.goals, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: User;
+
+  @OneToMany(() => GoalAdjustment, (adjustment) => adjustment.goal)
+  adjustments!: GoalAdjustment[];
 }
 

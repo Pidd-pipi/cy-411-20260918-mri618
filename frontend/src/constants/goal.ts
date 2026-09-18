@@ -19,3 +19,19 @@ export const GOAL_STATUS_COLORS: Record<GoalStatus, string> = {
   [GoalStatus.EXPIRED]: 'error'
 };
 
+export enum GoalAdjustmentSegment {
+  ORIGINAL = 'original',
+  CURRENT = 'current'
+}
+
+export const GOAL_ADJUSTMENT_SEGMENT_LABELS: Record<GoalAdjustmentSegment, string> = {
+  [GoalAdjustmentSegment.ORIGINAL]: '原上限段结余',
+  [GoalAdjustmentSegment.CURRENT]: '新上限段结余'
+};
+
+export const GOAL_ADJUSTMENT_ERROR_FIELDS = {
+  NEW_VALUE: 'GoalAdjustment.new_value',
+  EFFECTIVE_DATE: 'GoalAdjustment.effective_date',
+  STATUS: 'Goal.status'
+};
+

@@ -28,6 +28,7 @@ docker compose down
 - CarbonFactor 按地区与分类匹配并自动计算 `carbon_value`
 - 仪表盘展示今日、本周、本月碳排放和趋势图
 - 目标管理展示目标完成进度和到期区间
+- 进行中目标支持一次期中调整：成员提交新上限与生效日后，原上限负责生效日前排放、新上限负责生效日当天及以后；已结束目标、周期外日期、再次调整一律拒绝；目标卡展示原上限、当前上限与分段剩余额，补录历史活动后两段结余自动重算
 - 排行榜按地区和时间段查看用户低碳排名
 - 管理员查看操作审计日志
 
@@ -120,6 +121,7 @@ npm run dev
 - User：`database/init.sql` → `backend/src/models/user.ts` → `backend/src/services/userService.ts` → `backend/src/controllers/userController.ts` → `backend/src/routes/users.ts` → `frontend/src/api/user.ts` → `frontend/src/stores/userStore.ts` → `frontend/src/pages/Profile.tsx`
 - Activity：`database/init.sql` → `backend/src/models/activity.ts` → `backend/src/services/activityService.ts` → `backend/src/controllers/activityController.ts` → `backend/src/routes/activities.ts` → `frontend/src/api/activity.ts` → `frontend/src/stores/activityStore.ts` → `frontend/src/pages/Activities.tsx`
 - Goal：`database/init.sql` → `backend/src/models/goal.ts` → `backend/src/services/goalService.ts` → `backend/src/controllers/goalController.ts` → `backend/src/routes/goals.ts` → `frontend/src/api/goal.ts` → `frontend/src/stores/goalStore.ts` → `frontend/src/pages/Goals.tsx`
+- GoalAdjustment（减排目标期中调整，每目标仅一条）：`database/init.sql`（`goal_adjustments` 表，`uk_goal_adjustment_goal` 唯一键）→ `backend/src/models/goalAdjustment.ts` → `backend/src/services/goalAdjustmentService.ts` → `backend/src/controllers/goalAdjustmentController.ts` → `backend/src/routes/goals.ts`（`POST /goals/:id/adjustment`）→ `frontend/src/api/goal.ts` → `frontend/src/stores/goalStore.ts` → `frontend/src/pages/Goals.tsx`
 - CarbonFactor：`database/init.sql` → `backend/src/models/carbonFactor.ts` → `backend/src/services/factorService.ts` → `backend/src/controllers/factorController.ts` → `backend/src/routes/factors.ts` → `frontend/src/api/factor.ts` → `frontend/src/pages/Activities.tsx`
 
 ## 横切关注点
@@ -140,9 +142,16 @@ npm run dev
 ### GoalStatus
 
 - 后端定义：`backend/src/constants/goal.ts`
-- 后端引用：`backend/src/constants/errorCodes.ts`、`backend/src/constants/logTemplates.ts`、`backend/src/models/goal.ts`、`backend/src/services/goalService.ts`、`backend/src/routes/goals.ts`
+- 后端引用：`backend/src/constants/errorCodes.ts`、`backend/src/constants/logTemplates.ts`、`backend/src/models/goal.ts`、`backend/src/services/goalService.ts`、`backend/src/services/goalAdjustmentService.ts`、`backend/src/routes/goals.ts`
 - 前端定义：`frontend/src/constants/goal.ts`
 - 前端引用：`frontend/src/constants/errorCodes.ts`、`frontend/src/constants/messages.ts`、`frontend/src/types/entities.ts`、`frontend/src/api/goal.ts`、`frontend/src/components/common/GoalProgressCard.tsx`、`frontend/src/pages/Goals.tsx`、`frontend/src/utils/formatters.ts`
+
+### GoalAdjustmentSegment（期中调整分段：original / current）
+
+- 后端定义：`backend/src/constants/goal.ts`
+- 后端引用：`backend/src/constants/errorCodes.ts`（GOAL_ADJUSTMENT_* 错误码）、`backend/src/constants/logTemplates.ts`（GOAL_ADJUSTMENT_* 模板）、`backend/src/models/goalAdjustment.ts`、`backend/src/services/goalService.ts`（分段结余重算）、`backend/src/services/goalAdjustmentService.ts`、`backend/src/controllers/goalAdjustmentController.ts`、`backend/src/routes/goals.ts`
+- 前端定义：`frontend/src/constants/goal.ts`
+- 前端引用：`frontend/src/constants/errorCodes.ts`、`frontend/src/types/entities.ts`、`frontend/src/api/goal.ts`、`frontend/src/stores/goalStore.ts`、`frontend/src/components/common/GoalProgressCard.tsx`、`frontend/src/pages/Goals.tsx`
 
 ## 强制分层与耦合设计
 
