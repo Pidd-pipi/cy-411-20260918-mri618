@@ -1,6 +1,12 @@
 export const Messages = {
   FRONTEND_ACTIVITY_SAVED: '活动记录已同步到碳账本',
   FRONTEND_GOAL_SAVED: '减排目标已更新',
+  FRONTEND_GOAL_ADJUSTED: '期中调整已生效：原上限负责生效日前，新上限负责当天及以后',
+  FRONTEND_GOAL_ADJUST_BUTTON: '期中调整',
+  FRONTEND_GOAL_ADJUST_TITLE: '目标期中调整',
+  FRONTEND_GOAL_CAP_ORIGINAL: '原上限',
+  FRONTEND_GOAL_CAP_CURRENT: '当前上限',
+  FRONTEND_GOAL_REMAINING: '剩余额',
   FRONTEND_PROFILE_SAVED: '个人资料已保存',
   FRONTEND_FACTOR_REQUIRED: '请先选择匹配的排放因子',
   BACKEND_SHARED_COPY: '前后端耦合文案：修改文案时需要同步后端 constants/messages.ts',

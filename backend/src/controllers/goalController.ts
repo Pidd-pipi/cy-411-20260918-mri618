@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpStatus, Param, Patch, Post, Req, UseGuards }
 import { Request } from 'express';
 import { ErrorCodes } from '../constants/errorCodes';
 import { RequireAuth } from '../middlewares/auth';
-import { GoalInput, GoalService } from '../services/goalService';
+import { GoalAdjustmentInput, GoalInput, GoalService } from '../services/goalService';
 import { AppError } from '../utils/AppError';
 import { logTemplate } from '../utils/logger';
 
@@ -37,6 +37,23 @@ export class GoalController {
       return await this.goalService.update(request.user!.id, Number(id), body);
     } catch (error: any) {
       throw new AppError(error.code || ErrorCodes.DATABASE_FAILED, `Goal[id=${id}] controller update failed: id ${error.message}`, error.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post(':id/adjustments')
+  async adjust(@Req() request: Request, @Param('id') id: string, @Body() body: GoalAdjustmentInput) {
+    request.auditEntity = 'GoalAdjustment';
+    request.auditEntityId = Number(id);
+    request.auditAction = 'Goal mid-term adjustment';
+    try {
+      return await this.goalService.adjust(request.user!.id, Number(id), body);
+    } catch (error: any) {
+      logTemplate('error', 'GOAL_ADJUST_FAILED', { id, field: 'GoalAdjustment.controller', reason: error.message });
+      throw new AppError(
+        error.code || ErrorCodes.DATABASE_FAILED,
+        `Goal[id=${id}] controller adjustment failed: ${error.message}`,
+        error.status || HttpStatus.BAD_REQUEST
+      );
     }
   }
 }

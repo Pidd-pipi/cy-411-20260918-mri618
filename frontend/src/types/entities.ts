@@ -35,6 +35,25 @@ export interface Activity {
   factor?: CarbonFactor | null;
 }
 
+export interface GoalSegment {
+  phase: 'original' | 'adjusted';
+  startDate: string;
+  endDate: string;
+  targetValue: number;
+  currentValue: number;
+  remainingValue: number;
+}
+
+export interface GoalAdjustment {
+  id: number;
+  goalId: number;
+  userId: number;
+  originalTargetValue: string;
+  newTargetValue: string;
+  effectiveDate: string;
+  createdAt?: string;
+}
+
 export interface Goal {
   id: number;
   userId: number;
@@ -46,6 +65,11 @@ export interface Goal {
   status: GoalStatus;
   currentValue?: number;
   progress?: number;
+  originalTargetValue?: number;
+  currentTargetValue?: number;
+  remainingValue?: number;
+  adjustment?: GoalAdjustment | null;
+  segments?: GoalSegment[];
 }
 
 export interface AuditLog {

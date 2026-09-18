@@ -5,9 +5,9 @@ import { logTemplate } from '../utils/logger';
 export const goalRoutes = [
   'GET /goals requireAuth',
   'POST /goals requireAuth audit',
-  'PATCH /goals/:id requireAuth audit'
+  'PATCH /goals/:id requireAuth audit',
+  'POST /goals/:id/adjustments requireAuth audit'
 ];
 
 logTemplate('info', 'GOAL_LIST_START', { values: Object.values(GoalStatus).join(',') });
 export const goalRouteControllers = [GoalController];
-

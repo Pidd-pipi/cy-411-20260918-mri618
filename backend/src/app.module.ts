@@ -13,6 +13,7 @@ import { Activity } from './models/activity';
 import { AuditLog } from './models/auditLog';
 import { CarbonFactor } from './models/carbonFactor';
 import { Goal } from './models/goal';
+import { GoalAdjustment } from './models/goalAdjustment';
 import { Role } from './models/role';
 import { User } from './models/user';
 import { AuditLogger } from './middlewares/auditLogger';
@@ -25,7 +26,7 @@ import { RankingService } from './services/rankingService';
 import { UserService } from './services/userService';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig()), TypeOrmModule.forFeature([User, Role, Activity, Goal, CarbonFactor, AuditLog])],
+  imports: [TypeOrmModule.forRoot(databaseConfig()), TypeOrmModule.forFeature([User, Role, Activity, Goal, GoalAdjustment, CarbonFactor, AuditLog])],
   controllers: [
     AppController,
     ...userRouteControllers,

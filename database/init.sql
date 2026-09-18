@@ -64,6 +64,20 @@ CREATE TABLE IF NOT EXISTS goals (
   KEY idx_goal_user_status (user_id, status)
 );
 
+CREATE TABLE IF NOT EXISTS goal_adjustments (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  goal_id BIGINT NOT NULL,
+  user_id BIGINT NOT NULL,
+  original_target_value DECIMAL(12,2) NOT NULL,
+  new_target_value DECIMAL(12,2) NOT NULL,
+  effective_date DATE NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_goal_adjustments_goal FOREIGN KEY (goal_id) REFERENCES goals(id) ON DELETE CASCADE,
+  CONSTRAINT fk_goal_adjustments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY uk_goal_adjustment_goal (goal_id),
+  KEY idx_goal_adjustment_user (user_id)
+);
+
 CREATE TABLE IF NOT EXISTS audit_logs (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   user_id BIGINT NULL,

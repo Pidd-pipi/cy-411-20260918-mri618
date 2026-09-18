@@ -28,6 +28,7 @@ docker compose down
 - CarbonFactor 按地区与分类匹配并自动计算 `carbon_value`
 - 仪表盘展示今日、本周、本月碳排放和趋势图
 - 目标管理展示目标完成进度和到期区间
+- 进行中目标支持一次期中调整：提交新上限与生效日期，原上限负责生效日前、新上限负责生效日当天及以后；目标卡展示原上限、当前上限、剩余额及两段结余
 - 排行榜按地区和时间段查看用户低碳排名
 - 管理员查看操作审计日志
 
@@ -120,6 +121,7 @@ npm run dev
 - User：`database/init.sql` → `backend/src/models/user.ts` → `backend/src/services/userService.ts` → `backend/src/controllers/userController.ts` → `backend/src/routes/users.ts` → `frontend/src/api/user.ts` → `frontend/src/stores/userStore.ts` → `frontend/src/pages/Profile.tsx`
 - Activity：`database/init.sql` → `backend/src/models/activity.ts` → `backend/src/services/activityService.ts` → `backend/src/controllers/activityController.ts` → `backend/src/routes/activities.ts` → `frontend/src/api/activity.ts` → `frontend/src/stores/activityStore.ts` → `frontend/src/pages/Activities.tsx`
 - Goal：`database/init.sql` → `backend/src/models/goal.ts` → `backend/src/services/goalService.ts` → `backend/src/controllers/goalController.ts` → `backend/src/routes/goals.ts` → `frontend/src/api/goal.ts` → `frontend/src/stores/goalStore.ts` → `frontend/src/pages/Goals.tsx`
+- GoalAdjustment（目标期中调整）：`database/init.sql` 的 `goal_adjustments` 表 → `backend/src/models/goalAdjustment.ts` → `backend/src/services/goalService.ts`（`adjust` 事务方法）→ `backend/src/controllers/goalController.ts`（`POST /goals/:id/adjustments`）→ `frontend/src/types/entities.ts` → `frontend/src/api/goal.ts`（`adjustGoal`）→ `frontend/src/stores/goalStore.ts` → `frontend/src/pages/Goals.tsx` 调整弹窗 → `frontend/src/components/common/GoalProgressCard.tsx` 两段结余展示
 - CarbonFactor：`database/init.sql` → `backend/src/models/carbonFactor.ts` → `backend/src/services/factorService.ts` → `backend/src/controllers/factorController.ts` → `backend/src/routes/factors.ts` → `frontend/src/api/factor.ts` → `frontend/src/pages/Activities.tsx`
 
 ## 横切关注点
@@ -143,6 +145,17 @@ npm run dev
 - 后端引用：`backend/src/constants/errorCodes.ts`、`backend/src/constants/logTemplates.ts`、`backend/src/models/goal.ts`、`backend/src/services/goalService.ts`、`backend/src/routes/goals.ts`
 - 前端定义：`frontend/src/constants/goal.ts`
 - 前端引用：`frontend/src/constants/errorCodes.ts`、`frontend/src/constants/messages.ts`、`frontend/src/types/entities.ts`、`frontend/src/api/goal.ts`、`frontend/src/components/common/GoalProgressCard.tsx`、`frontend/src/pages/Goals.tsx`、`frontend/src/utils/formatters.ts`
+
+## 期中调整规则
+
+`POST /api/goals/:id/adjustments`，请求体 `{ "newTargetValue": number, "effectiveDate": "YYYY-MM-DD" }`：
+
+- 仅 `active` 状态目标可调整；`completed`、`expired`、`pending` 直接拒绝。
+- 生效日期必须落在目标周期 `[start_date, end_date]` 内，周期外日期拒绝。
+- 每个目标只允许一次调整（`goal_adjustments.goal_id` 唯一索引 + 行悲观锁），再次调整返回 409；两个并发请求只有一项落库，失败方事务整体回滚，不产生记录、不改动目标。
+- 调整不改写 `goals` 行：原上限快照存入 `goal_adjustments.original_target_value`，生效日前的活动按原上限汇总，生效日当天及以后的活动按新上限汇总。
+- 调整后补录生效日前的活动时，服务端按 `[start_date, effective_date - 1]` 与 `[effective_date, end_date]` 两段实时重算，两段结余与总剩余额始终一致。
+- 目标卡（`/goals` 与 `/dashboard` 共用的 `<GoalProgressCard>`）展示原上限、当前上限（按今天相对生效日取值）、剩余额和分段结余；原有活动记录与仪表盘不受影响。
 
 ## 强制分层与耦合设计
 
